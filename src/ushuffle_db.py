@@ -157,13 +157,21 @@ getRC = lambda cur: cur.rowcount if hasattr(cur, 'rowcount') else -1
 def update(cur):
     fr = rand(1,5)
     to = rand(1,5)
+    while(fr == to):
+        to = rand(1,5)
     cur.execute("update users set projid = %d where projid = %d" %(to,fr))
     return fr, to, getRC(cur)
 
 def delete(cur):
     rm = rand(1,5)
+    if rm not in get_proid(cur):
+        return rm, -1
     cur.execute('delete from users where projid = %d' %rm)
     return rm, getRC(cur)
+
+def get_proid(cur):
+    cur.execute('select distinct projid from users')
+    return cur.fetchall()
 
 def dbDump(cur):
     cur.execute('select * from users')
