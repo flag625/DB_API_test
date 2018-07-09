@@ -8,7 +8,7 @@
 """
 
 from distutils.log import warn as printf
-import os
+import os, time
 from random import randrange as rand
 
 if isinstance(__builtins__, dict) and 'raw_input' in __builtins__:
@@ -111,7 +111,7 @@ def connect(db, DBNAME):
 
     return cxn
 
-def create(cur):
+def create(cur, retry=3):
     try:
         cur.execute('''
             create table users (
@@ -120,8 +120,13 @@ def create(cur):
                 projid integer )
             ''' %NAMWLEN)
     except DB_EXC.OperationalError:
-        drop(cur)
-        create(cur)
+        if retry > 0:
+            drop(cur)
+            retry -= 1
+            time.sleep(10)
+            create(cur, retry)
+        else:
+            return None
 
 drop = lambda cur: cur.execute('drop table users')
 
