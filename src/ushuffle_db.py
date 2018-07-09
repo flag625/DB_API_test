@@ -89,7 +89,7 @@ def connect(db, DBNAME):
             except ImportError:
                 return None
 
-    #调用Gadfly
+    #调用Gadfly,暂时没有安装gadfly库
     elif db == 'gadfly':
         try:
             from gadfly import gadfly
