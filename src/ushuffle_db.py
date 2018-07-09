@@ -76,10 +76,12 @@ def connect(db, DBNAME):
                     return None
         except ImportError:
             try:
-                import mysql.connector
-                import mysql.connector.errors as DB_EXC
+                #import mysql.connector as my_sql
+                #import mysql.connector.errors as DB_EXC
+                import pymysql as my_sql
+                import pymysql.err as DB_EXC
                 try:
-                    cxn = mysql.connector.connect(**{
+                    cxn = my_sql.connect(**{
                         'database':DBNAME,
                         'user'    :DBUSER,
                         'password':'a12345678'
