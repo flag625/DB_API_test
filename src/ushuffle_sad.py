@@ -14,8 +14,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from ushuffle_db import DBNAME, NAMWLEN, randName, FIELDS, tformat, cformat, setup
 
 DSNs = {
-    'mysql': 'mysql://root@localhost/%s' %DBNAME,
-    'sqlite': 'sqlite://:memory:',
+    'mysql': 'mysql+pymysql://root:a12345678@localhost:3306/%s' %DBNAME,
+    'sqlite': 'sqlite:///:memory:',
 }
 
 Base = declarative_base()
@@ -75,7 +75,7 @@ class SQLAlchemyTest(object):
 
     def dbDump(self):
         printf('\n%s' % ' '.join(map(cformat, FIELDS)))
-        users = self.ses.query(Users).all
+        users = self.ses.query(Users).all()
         for user in users:
             printf(user)
         self.ses.commit()
