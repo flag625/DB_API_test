@@ -31,7 +31,7 @@ class Users(Base):
 
 
 class SQLAlchemyTest(object):
-    def __init__(self, dsn, retry_num=3):
+    def __init__(self, dsn):
         try:
             eng = create_engine(dsn)
         except ImportError:
@@ -39,15 +39,12 @@ class SQLAlchemyTest(object):
         try:
             eng.connect()
         except exc.OperationalError:
-            if(retry_num > 0):
-                retry_num -= 1
+            try:
                 eng = create_engine(dirname(dsn))
                 eng.execute('create database %s' %DBNAME).close()
-                time.sleep(10)
-                SQLAlchemyTest(dsn, retry_num)
-            else:
-                raise exc.OperationalError
-
+                eng = create_engine(dsn)
+            except exc.OperationalError:
+                raise RuntimeError()
 
         Session = orm.sessionmaker(bind=eng)
         self.ses = Session()
@@ -98,6 +95,7 @@ class SQLAlchemyTest(object):
 def main():
     printf('*** Connect to %r database' %DBNAME)
     db = setup()
+    time.sleep(0.01)
     if db not in DSNs:
         printf('\nError: %r not supported, exit' %db)
         return
