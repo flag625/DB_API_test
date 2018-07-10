@@ -43,6 +43,7 @@ class SQLAlchemyTest(object):
                 retry_num -= 1
                 eng = create_engine(dirname(dsn))
                 eng.execute('create database %s' %DBNAME).close()
+                time.sleep(10)
                 SQLAlchemyTest(dsn, retry_num)
             else:
                 raise exc.OperationalError
