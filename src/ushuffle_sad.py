@@ -12,6 +12,7 @@ from random import randrange as rand
 from sqlalchemy import Column, Integer, String, create_engine, exc, orm
 from sqlalchemy.ext.declarative import declarative_base
 from ushuffle_db import DBNAME, NAMWLEN, randName, FIELDS, tformat, cformat, setup
+import time
 
 DSNs = {
     'mysql': 'mysql+pymysql://root:a12345678@localhost:3306/%s' %DBNAME,
@@ -30,7 +31,7 @@ class Users(Base):
 
 
 class SQLAlchemyTest(object):
-    def __init__(self, dsn):
+    def __init__(self, dsn, retry_num=3):
         try:
             eng = create_engine(dsn)
         except ImportError:
@@ -38,9 +39,14 @@ class SQLAlchemyTest(object):
         try:
             eng.connect()
         except exc.OperationalError:
-            eng = create_engine(dirname(dsn))
-            eng.execute('create database %s' %DBNAME).close()
-            eng = create_engine(dsn)
+            if(retry_num > 0):
+                retry_num -= 1
+                eng = create_engine(dirname(dsn))
+                eng.execute('create database %s' %DBNAME).close()
+                SQLAlchemyTest(dsn, retry_num)
+            else:
+                raise exc.OperationalError
+
 
         Session = orm.sessionmaker(bind=eng)
         self.ses = Session()
