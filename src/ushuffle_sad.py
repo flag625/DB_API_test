@@ -64,18 +64,24 @@ class SQLAlchemyTest(object):
         while(fr == to):
             to = rand(1,5)
         i = -1
+
         users = self.ses.query(Users).filter_by(projid=fr).all()
         for i, user in enumerate(users):
             user.projid = to
+
+        #users = self.ses.query(Users).filter(Users.projid==fr).update({Users.projid:to})
         self.ses.commit()
         return fr, to, i+1
 
     def delete(self):
         rm = rand(1,5)
         i = -1
+        
         users = self.ses.query(Users).filter_by(projid=rm).all()
         for i, user in enumerate(users):
             self.ses.delete(user)
+
+        #users = self.ses.query(Users).filter(Users.projid==rm).delete()
         self.ses.commit()
         return rm, i+1
 
@@ -101,8 +107,8 @@ class SQLAlchemyTest(object):
 
 def main():
     printf('*** Connect to %r database' %DBNAME)
+    time.sleep(0.01)
     db = setup()
-    time.sleep(1)
     if db not in DSNs:
         printf('\nError: %r not supported, exit' %db)
         return
