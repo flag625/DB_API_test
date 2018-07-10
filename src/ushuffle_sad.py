@@ -63,6 +63,8 @@ class SQLAlchemyTest(object):
     def update(self):
         fr = rand(1,5)
         to = rand(1,5)
+        while(fr == to):
+            to = rand(1,5)
         i = -1
         users = self.ses.query(Users).filter_by(projid=fr).all()
         for i, user in enumerate(users):
