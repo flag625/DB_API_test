@@ -109,6 +109,7 @@ def main():
         return
 
     printf('\n*** Create users table (drop old one if appl.)')
+    orm.drop(checkfirst=True)
     orm.create()
 
     printf('\n*** Insert names into table')
